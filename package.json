@@ -1,0 +1,19 @@
+{
+  "name": "openapi-ld-mediator",
+  "version": "0.0.1",
+  "description": "Experimental tool to interact semantically with existing Web services, starting from the Open API description and JSON-LD mappings.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/miguel76/openapi-ld-mediator.git"
+  },
+  "author": "miguel.ceriani@gmail.com",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/miguel76/openapi-ld-mediator/issues"
+  },
+  "homepage": "https://github.com/miguel76/openapi-ld-mediator#readme"
+}

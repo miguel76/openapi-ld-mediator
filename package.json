@@ -4,6 +4,7 @@
   "description": "Experimental tool to interact semantically with existing Web services, starting from the Open API description and JSON-LD mappings.",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,6 +18,11 @@
   },
   "homepage": "https://github.com/miguel76/openapi-ld-mediator#readme",
   "dependencies": {
+    "async": "^2.5.0",
+    "js-yaml": "^3.9.1",
+    "jsonld": "^0.4.12",
+    "lodash": "^4.17.4",
+    "promise": "^8.0.1",
     "swagger-client": "^3.0.19"
   }
 }

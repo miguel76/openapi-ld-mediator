@@ -57,3 +57,5 @@ typings/
 # dotenv environment variables file
 .env
 
+# shell to execute with local env variables
+startTest.sh

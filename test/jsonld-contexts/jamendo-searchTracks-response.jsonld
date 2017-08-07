@@ -1,0 +1,43 @@
+[
+  {
+    "@base": "http://audiocommons.org/ns/jamendo/tracks/",
+    "jamendo": "http://audiocommons.org/ns/jamendo/vocab/",
+    "ac": "http://audiocommons.org/ns/audiocommons#",
+    "dc": "http://purl.org/dc/terms/",
+    "cc": "https://creativecommons.org/ns#",
+    "ccLicenses": "https://creativecommons.org/licenses/by-nc/",
+
+    "results":"jamendo:trackInResults",
+    "id": "@id",
+    "name": "dc:title",
+    "duration": "ac:duration",
+    "artist_id": {
+        "@context": {"@base": "http://audiocommons.org/ns/jamendo/artists/"},
+        "@type": "@id", "@id": "ac:author"
+    },
+    "album_id": {
+        "@context": {"@base": "http://audiocommons.org/ns/jamendo/albums/"},
+        "@type": "@id", "@id": "ac:album"
+    }
+  },
+  {
+    "@base": "http://audiocommons.org/ns/jamendo/artists/",
+    "jamendo": "http://audiocommons.org/ns/jamendo/vocab/",
+    "ac": "http://audiocommons.org/ns/audiocommons#",
+
+    "results":"jamendo:artistInResults",
+    "artist_id": "@id",
+    "artist_name": "foaf:name"
+  },
+  {
+    "@base": "http://audiocommons.org/ns/jamendo/albums/",
+    "jamendo": "http://audiocommons.org/ns/jamendo/vocab/",
+    "ac": "http://audiocommons.org/ns/audiocommons#",
+    "dc": "http://purl.org/dc/terms/",
+
+    "results":"jamendo:albumInResults",
+    "album_id": "@id",
+    "album_name": "dc:title",
+    "album_image": "foaf:depiction"
+  }
+]

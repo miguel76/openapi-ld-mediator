@@ -27,6 +27,7 @@ const dePromisify = promiseReturningFunction => (...params) => {
 async.autoInject({
   jamendoApiSpec: readJson('./test/openapi/jamendo.json'),
   jamendoJsonLdContexts: readJson('./test/jsonld-contexts/jamendo-searchTracks-response.jsonld'),
+  jamendoJsonLdFrame: readJson('./test/jsonld-frames/jamendo-searchTracks-results.jsonld'),
   jamendoSwaggerConf: ['jamendoApiSpec', selectAs(null, 'spec')],
   jamendoApi: ['jamendoSwaggerConf', dePromisify(Swagger)],
   jamendoSearchCall: [async.constant({
@@ -46,11 +47,12 @@ async.autoInject({
             jamendoJsonLdContexts,
             async.seq(
                 selectAs(null, 'expandContext'),
-                _.partial(jsonld.promises.expand, jamendoSearchResults))),
+                _.partial(jsonld.expand, jamendoSearchResults))),
         async.asyncify(_.flatten),
         async.asyncify(_.spread(_.partial(_.merge, {}))))(cb);
   },
-  result: ['jamendoSearchResultsLd', async.asyncify(_.identity)]
+  resultsLd: ['jamendoSearchResultsLd', 'jamendoJsonLdFrame', _.partial(jsonld.frame, _, _, {})],
+  result: ['resultsLd', async.asyncify(_.identity)]
 }, function(err, results) {
   if (err) {
     console.error(err);

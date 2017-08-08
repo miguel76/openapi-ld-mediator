@@ -1,0 +1,13 @@
+{
+  "@context": {
+    "jamendo": "http://audiocommons.org/ns/jamendo/vocab/",
+    "ac": "http://audiocommons.org/ns/audiocommons#"
+ },
+ "@explicit": true,
+  "jamendo:trackInResults": {
+    "@requireAll": false,
+    "@explicit": false,
+    "ac:author": {},
+    "ac:album": {}
+  }
+}

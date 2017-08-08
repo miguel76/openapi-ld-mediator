@@ -4,6 +4,8 @@ const jsonld = require('jsonld');
 const Promise = require('promise');
 const _ = require('lodash');
 const async = require('async');
+const rdflib = require('rdflib');
+const eye = require('./eye.js');
 
 const readJson = fileName => cb =>
   fs.readFile(fileName, 'utf8', (err, str) => err ? cb(err) : cb(null, JSON.parse(str)));
@@ -24,7 +26,24 @@ const dePromisify = promiseReturningFunction => (...params) => {
         .catch(error => cb(error));
 };
 
+const classicTurtle = turtleString => {
+  return turtleString.replace(/^PREFIX ([^:]*): (<[^>]*>)$/mg, '@prefix $1: $2.')
+};
+
+const quadsToTriples = quads => {
+  return quads.replace(/^(\S*) (\S*) (\S*) (\S*) .$/mg, '$1 $2 $3 .')
+};
+
+var rdfLibStore = rdflib.graph();
+
 async.autoInject({
+  // newStore: [async.constant(rdfLibStore)],
+  newStore: [async.asyncify(rdflib.graph)],
+  rdfsRules: [_.partial(fs.readFile, './rules/rdfs.n3', 'utf8')],
+  rdfsInStore: ['rdfsRules', 'newStore', _.partial(rdflib.parse, _, _, 'http://shouldbethebase.org/', 'text/n3')],
+  jamendoOntology: [_.partial(fs.readFile, './test/ontologies/jamendo.ttl', 'utf8')],
+  rdfsAndOntologyInStore: ['jamendoOntology', 'rdfsInStore', _.partial(rdflib.parse, _, _, 'http://shouldbethebase.org/', 'text/turtle')],
+  identityQuery: [_.partial(fs.readFile, './queries/identity.n3', 'utf8')],
   jamendoApiSpec: readJson('./test/openapi/jamendo.json'),
   jamendoJsonLdContexts: readJson('./test/jsonld-contexts/jamendo-searchTracks-response.jsonld'),
   jamendoJsonLdFrame: readJson('./test/jsonld-frames/jamendo-searchTracks-results.jsonld'),
@@ -51,8 +70,18 @@ async.autoInject({
         async.asyncify(_.flatten),
         async.asyncify(_.spread(_.partial(_.merge, {}))))(cb);
   },
-  resultsLd: ['jamendoSearchResultsLd', 'jamendoJsonLdFrame', _.partial(jsonld.frame, _, _, {})],
-  result: ['resultsLd', async.asyncify(_.identity)]
+  resultsAsQuads: ['jamendoSearchResultsLd', _.partial(jsonld.toRDF, _, {format: 'application/nquads'})],
+  resultsInStore: ['resultsAsQuads', 'rdfsAndOntologyInStore', _.partial(rdflib.parse, _, _, null, 'application/n-quads')],
+  resultsAsN3: ['resultsInStore', _.partial(rdflib.serialize, null, _, 'http://shouldbethebase.org/', 'text/n3')],
+  resultsAfterInference: ['resultsAsN3', 'identityQuery', eye],
+  resultsAfterInferenceForStore: ['resultsAfterInference', async.asyncify(classicTurtle)],
+  newOutputStore: [async.asyncify(rdflib.graph)],
+  fullOutputStore: ['resultsAfterInferenceForStore', 'newOutputStore', _.partial(rdflib.parse, _, _, 'http://shouldbethebase.org/', 'text/n3')],
+  outputAsQuads: ['fullOutputStore', _.partial(rdflib.serialize, null, _, 'http://shouldbethebase.org/', 'application/n-quads')],
+  outputAsTriples: ['outputAsQuads', async.asyncify(quadsToTriples)],
+  outputAsJsonLd: ['outputAsTriples', _.partial(jsonld.fromRDF, _, {format: 'application/nquads'})],
+  output: ['outputAsJsonLd', 'jamendoJsonLdFrame', _.partial(jsonld.frame, _, _, {})],
+  result: ['output', async.asyncify(_.identity)]
 }, function(err, results) {
   if (err) {
     console.error(err);

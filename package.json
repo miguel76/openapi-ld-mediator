@@ -24,7 +24,6 @@
     "lodash": "^4.17.4",
     "promise": "^8.0.1",
     "rdflib": "^0.15.0",
-    "request": "^2.81.0",
     "swagger-client": "^3.0.19"
   }
 }

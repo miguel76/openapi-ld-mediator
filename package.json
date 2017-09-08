@@ -19,6 +19,7 @@
   "homepage": "https://github.com/miguel76/openapi-ld-mediator#readme",
   "dependencies": {
     "async": "^2.5.0",
+    "jamendo-openapi": "^1.0.1",
     "js-yaml": "^3.9.1",
     "jsonld": "^0.4.12",
     "lodash": "^4.17.4",

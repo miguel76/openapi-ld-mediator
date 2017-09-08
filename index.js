@@ -6,6 +6,7 @@ const _ = require('lodash');
 const async = require('async');
 const rdflib = require('rdflib');
 const eye = require('./eye.js');
+const jamendoApiSpec = require('jamendo-openapi');
 
 const readJson = fileName => cb =>
   fs.readFile(fileName, 'utf8', (err, str) => err ? cb(err) : cb(null, JSON.parse(str)));
@@ -50,7 +51,7 @@ var rdfLibStore = rdflib.graph();
 async.autoInject({
   jamendoOntology: [_.partial(fs.readFile, './test/ontologies/jamendo.ttl', 'utf8')],
   identityQuery: [_.partial(fs.readFile, './queries/identity.n3', 'utf8')],
-  jamendoApiSpec: readJson('./test/openapi/jamendo.json'),
+  jamendoApiSpec: [async.constant(jamendoApiSpec)],
   jamendoJsonLdContexts: readJson('./test/jsonld-contexts/jamendo-searchTracks-response.jsonld'),
   jamendoJsonLdFrame: readJson('./test/jsonld-frames/jamendo-searchTracks-results.jsonld'),
   jamendoSwaggerConf: ['jamendoApiSpec', selectAs(null, 'spec')],
